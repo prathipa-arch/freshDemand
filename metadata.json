@@ -1,0 +1,6 @@
+{
+  "name": "FreshDemand & Food Waste AI",
+  "description": "ระบบคาดการณ์ความต้องการและลดสินค้าคงเหลือทิ้งสำหรับธุรกิจอาหารสดและเบเกอรี่ พร้อมแดชบอร์ด จำลองข้อมูล 100,000 แถว และกระบวนการ CRISP-DM เต็มรูปแบบ",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
