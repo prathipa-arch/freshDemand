@@ -1,0 +1,14 @@
+services:
+  # Option A: Web Service (Node.js Express serving Vite build)
+  - type: web
+    name: freshdemand-app
+    env: node
+    plan: free
+    region: ohio
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=400
+      - key: NODE_ENV
+        value: production
