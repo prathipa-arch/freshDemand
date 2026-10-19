@@ -1,13 +1,37 @@
 export type CrispStage = 
-  | 'overview' 
-  | 'business' 
-  | 'data_understanding' 
-  | 'data_prep' 
-  | 'modeling' 
-  | 'evaluation' 
-  | 'deployment';
+  | 'overview'            // เมนูที่ 1: Dashboard ภาพรวม
+  | 'data_prep'           // เมนูที่ 2: Data Understanding & Preparation
+  | 'forecasting'         // เมนูที่ 3: AI Demand Forecasting
+  | 'modeling'            // เมนูที่ 4: Modeling
+  | 'evaluation'          // เมนูที่ 5: Evaluation
+  | 'inventory_waste';    // เมนูที่ 6: Inventory & Food Waste Management
 
 export type UserRole = 'store_manager' | 'purchasing' | 'data_scientist' | 'executive';
+
+export interface ModelExperimentResult {
+  modelName: string;
+  modelType: 'Linear Regression' | 'Random Forest Regressor' | 'LightGBM Regressor';
+  trainingDataInfo: string;
+  testingDataInfo: string;
+  hyperparameters: Record<string, any>;
+  trainingStatus: 'ฝึกสำเร็จ (Ready)' | 'กำลังฝึก (Training)' | 'ยังไม่ฝึก';
+  trainingTimeSec: number;
+  mae: number;
+  rmse: number;
+  mapePct: number;
+  r2Score: number;
+  highlight: string;
+}
+
+export interface UserOverrideLog {
+  id: string;
+  timestamp: string;
+  skuName: string;
+  originalRecommendedQty: number;
+  overriddenQty: number;
+  reason: string;
+  operator: string;
+}
 
 export type ProductCategory = 
   | 'Bakery'
@@ -219,3 +243,35 @@ export interface ScenarioSimulationParams {
   crowdBufferPct: number;
   isSpecialPayday: boolean;
 }
+
+export interface AIClusterGroup {
+  id: string;
+  name: string;
+  clusterType: 'perishability' | 'velocity' | 'demand_pattern' | 'channel';
+  badgeColor: string;
+  count: number;
+  skus: string[];
+  description: string;
+  riskLevel: 'สูงมาก' | 'สูง' | 'ปานกลาง' | 'ต่ำ';
+  recommendedStrategy: string;
+  recommendedModel: string;
+  avgDailySales: number;
+}
+
+export interface AIColumnRole {
+  column: string;
+  detectedType: string;
+  role: 'Target Y (ยอดขาย)' | 'Date/Time (เวลา)' | 'Category/Group (หมวด)' | 'Numeric Feature (ตัวเลข)' | 'Identifier (รหัส)' | 'PII/Sensitive (ข้อมูลส่วนตัว)' | 'Other (ทั่วไป)';
+  confidence: number;
+  imputationAdvice: string;
+  sampleValue: string;
+}
+
+export interface AIAutoClassificationReport {
+  timestamp: string;
+  detectedColumns: AIColumnRole[];
+  clusters: AIClusterGroup[];
+  overallDataHealthScore: number;
+  aiInsights: string[];
+}
+

@@ -5,14 +5,15 @@ import { mapExcelToSystemData, ProcessedExcelSystemData } from './utils/excelDat
 import { Header } from './components/Header';
 import { OverviewDashboard } from './components/OverviewDashboard';
 import { BusinessUnderstandingView } from './components/BusinessUnderstandingView';
-import { DataUnderstandingView } from './components/DataUnderstandingView';
-import { DataPreparationView } from './components/DataPreparationView';
+import { DataPrepView } from './components/DataPrepView';
+import { AIDemandForecastingView } from './components/AIDemandForecastingView';
 import { ModelingView } from './components/ModelingView';
 import { EvaluationView } from './components/EvaluationView';
 import { DeploymentView } from './components/DeploymentView';
 import { ExcelUploader } from './components/ExcelUploader';
 import { ScenarioSimulatorModal } from './components/ScenarioSimulatorModal';
 import { ExecutiveReportModal } from './components/ExecutiveReportModal';
+import { AIClassifierModal } from './components/AIClassifierModal';
 
 export default function App() {
   const [currentStage, setCurrentStage] = useState<CrispStage>('overview');
@@ -22,6 +23,7 @@ export default function App() {
   const [isExcelModalOpen, setIsExcelModalOpen] = useState(false);
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const [isExecutiveReportOpen, setIsExecutiveReportOpen] = useState(false);
+  const [isAIClassifierOpen, setIsAIClassifierOpen] = useState(false);
   const [activeExcelDataset, setActiveExcelDataset] = useState<ProcessedExcelSystemData | null>(null);
 
   const handleExcelUploaded = (fileData: UploadedExcelFile) => {
@@ -44,7 +46,7 @@ export default function App() {
         currentRole={currentRole}
         onChangeRole={setCurrentRole}
         markdownAlertsCount={markdownAlerts.filter(m => m.posAlertStatus === 'Active').length}
-        onOpenMarkdownAlerts={() => setCurrentStage('deployment')}
+        onOpenMarkdownAlerts={() => setCurrentStage('inventory_waste')}
         crowdBufferPct={crowdBufferPct}
         onChangeCrowdBuffer={setCrowdBufferPct}
         onOpenExcelUpload={() => setIsExcelModalOpen(true)}
@@ -52,6 +54,7 @@ export default function App() {
         onClearActiveExcel={handleClearExcelData}
         onOpenSimulator={() => setIsSimulatorOpen(true)}
         onOpenExecutiveReport={() => setIsExecutiveReportOpen(true)}
+        onOpenAIClassifier={() => setIsAIClassifierOpen(true)}
       />
 
       {/* Main Workspace Body */}
@@ -67,47 +70,34 @@ export default function App() {
             onClearExcelData={handleClearExcelData}
             onOpenSimulator={() => setIsSimulatorOpen(true)}
             onOpenExecutiveReport={() => setIsExecutiveReportOpen(true)}
+            onOpenAIClassifier={() => setIsAIClassifierOpen(true)}
           />
         )}
 
-        {currentStage === 'business' && (
-          <BusinessUnderstandingView
-            crowdBufferPct={crowdBufferPct}
-            onChangeCrowdBuffer={setCrowdBufferPct}
-          />
-        )}
-
-        {currentStage === 'data_understanding' && (
-          <DataUnderstandingView 
-            onNavigateStage={setCurrentStage} 
+        {currentStage === 'data_prep' && (
+          <DataPrepView
             excelDataset={activeExcelDataset}
             onExcelUploaded={handleExcelUploaded}
             onClearExcelData={handleClearExcelData}
           />
         )}
 
-        {currentStage === 'data_prep' && (
-          <DataPreparationView
-            currentRole={currentRole}
-            onChangeRole={setCurrentRole}
+        {currentStage === 'forecasting' && (
+          <AIDemandForecastingView
             excelDataset={activeExcelDataset}
+            crowdBufferPct={crowdBufferPct}
           />
         )}
 
         {currentStage === 'modeling' && (
-          <ModelingView
-            currentRole={currentRole}
-            crowdBufferPct={crowdBufferPct}
-            excelDataset={activeExcelDataset}
-            onOpenSimulator={() => setIsSimulatorOpen(true)}
-          />
+          <ModelingView excelDataset={activeExcelDataset} />
         )}
 
         {currentStage === 'evaluation' && (
-          <EvaluationView />
+          <EvaluationView excelDataset={activeExcelDataset} />
         )}
 
-        {currentStage === 'deployment' && (
+        {(currentStage === 'inventory_waste' || (currentStage as string) === 'deployment') && (
           <DeploymentView
             currentRole={currentRole}
             markdownAlerts={markdownAlerts}
@@ -160,6 +150,13 @@ export default function App() {
       <ExecutiveReportModal
         isOpen={isExecutiveReportOpen}
         onClose={() => setIsExecutiveReportOpen(false)}
+        excelDataset={activeExcelDataset}
+      />
+
+      {/* AI Smart Data Classifier & Clustering Modal */}
+      <AIClassifierModal
+        isOpen={isAIClassifierOpen}
+        onClose={() => setIsAIClassifierOpen(false)}
         excelDataset={activeExcelDataset}
       />
     </div>

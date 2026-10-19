@@ -54,6 +54,13 @@ export function generateSyntheticDataset(count: number = 100000): {
   // and maintain deterministic mathematical metrics for the full 100,000 dataset
   const generateLimit = Math.min(count, 500); // Fast high-performance preview slice for table, full statistical scale
   const startDate = new Date(2026, 7, 1); // August 2026
+  
+  // Pre-calculate 60 days to prevent 100,000 Date allocations in memory
+  const dateStrings: string[] = [];
+  for (let d = 0; d < 60; d++) {
+    const dObj = new Date(startDate.getTime() + d * 86400000);
+    dateStrings.push(dObj.toISOString().split('T')[0]);
+  }
 
   for (let i = 1; i <= count; i++) {
     const branch = BRANCHES[(i * 7) % BRANCHES.length];
@@ -62,8 +69,6 @@ export function generateSyntheticDataset(count: number = 100000): {
     
     // Day calculation over 60 days
     const dayOffset = (i % 60);
-    const currDate = new Date(startDate.getTime() + dayOffset * 86400000);
-    const dateStr = currDate.toISOString().split('T')[0];
     const hour = 8 + (i % 14); // 8:00 - 21:00
     const isHoliday = (dayOffset % 7 === 5 || dayOffset % 7 === 6);
 
@@ -94,6 +99,7 @@ export function generateSyntheticDataset(count: number = 100000): {
     totalRev += amount;
 
     if (i <= generateLimit) {
+      const dateStr = dateStrings[dayOffset];
       const custHash = `usr_${((i * 1234567) % 899999 + 100000).toString(16)}`;
       records.push({
         rowId: i,

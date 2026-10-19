@@ -13,7 +13,8 @@ import {
   ShieldCheck, 
   FileSpreadsheet,
   Sliders,
-  FileText
+  FileText,
+  BrainCircuit
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -33,6 +34,7 @@ interface HeaderProps {
   onClearActiveExcel?: () => void;
   onOpenSimulator?: () => void;
   onOpenExecutiveReport?: () => void;
+  onOpenAIClassifier?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -48,16 +50,16 @@ export const Header: React.FC<HeaderProps> = ({
   activeExcelName,
   onClearActiveExcel,
   onOpenSimulator,
-  onOpenExecutiveReport
+  onOpenExecutiveReport,
+  onOpenAIClassifier
 }) => {
   const crispStages: { id: CrispStage; label: string; stepNum: string; icon: React.ReactNode }[] = [
-    { id: 'overview', label: 'ภาพรวมระบบ', stepNum: 'HOME', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { id: 'business', label: '1. เป้าหมายทางธุรกิจ', stepNum: '01', icon: <TrendingUp className="w-4 h-4" /> },
-    { id: 'data_understanding', label: '2. ทำความเข้าใจข้อมูล', stepNum: '02', icon: <Database className="w-4 h-4" /> },
-    { id: 'data_prep', label: '3. การจัดเตรียมข้อมูล', stepNum: '03', icon: <Code2 className="w-4 h-4" /> },
-    { id: 'modeling', label: '4. การสร้างโมเดลพยากรณ์', stepNum: '04', icon: <Cpu className="w-4 h-4" /> },
-    { id: 'evaluation', label: '5. การประเมินผลโมเดล', stepNum: '05', icon: <CheckCircle2 className="w-4 h-4" /> },
-    { id: 'deployment', label: '6. การนำไปใช้งานจริง', stepNum: '06', icon: <Send className="w-4 h-4" /> },
+    { id: 'overview', label: '1. Dashboard ภาพรวม', stepNum: '01', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { id: 'data_prep', label: '2. Data Understanding & Preparation', stepNum: '02', icon: <Database className="w-4 h-4" /> },
+    { id: 'forecasting', label: '3. AI Demand Forecasting', stepNum: '03', icon: <TrendingUp className="w-4 h-4" /> },
+    { id: 'modeling', label: '4. Modeling (ทดลองโมเดล)', stepNum: '04', icon: <Cpu className="w-4 h-4" /> },
+    { id: 'evaluation', label: '5. Evaluation (ประเมินผล)', stepNum: '05', icon: <CheckCircle2 className="w-4 h-4" /> },
+    { id: 'inventory_waste', label: '6. จัดการสต็อก & ลดอาหารเหลือทิ้ง', stepNum: '06', icon: <Send className="w-4 h-4" /> },
   ];
 
   return (
@@ -107,28 +109,9 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </div>
 
-            {/* Role Switcher (RBAC Access Control) */}
-            <div className="flex items-center space-x-1.5 bg-slate-800/90 border border-slate-700/80 px-3 py-1.5 rounded-lg">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-slate-400">สิทธิ์:</span>
-              <select
-                value={currentRole}
-                onChange={(e) => onChangeRole(e.target.value as UserRole)}
-                className="bg-transparent text-emerald-300 font-semibold focus:outline-none cursor-pointer"
-              >
-                <option value="store_manager" className="bg-slate-800 text-slate-200">
-                  พนักงานหน้าร้าน / ผู้จัดการสาขา
-                </option>
-                <option value="purchasing" className="bg-slate-800 text-slate-200">
-                  ฝ่ายจัดซื้อสินค้า
-                </option>
-                <option value="data_scientist" className="bg-slate-800 text-slate-200">
-                  นักวิเคราะห์ข้อมูล
-                </option>
-                <option value="executive" className="bg-slate-800 text-slate-200">
-                  ผู้บริหารระดับสูง
-                </option>
-              </select>
+            <div className="flex items-center space-x-1.5 bg-slate-800/90 border border-slate-700/80 px-3 py-1.5 rounded-lg text-slate-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[11px] font-medium text-slate-300">พร้อมใช้งาน (Production)</span>
             </div>
 
             {/* Excel Upload / Active File Indicator */}
@@ -156,6 +139,18 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
                 <span>นำเข้าไฟล์ Excel</span>
+              </button>
+            )}
+
+            {/* AI Smart Data Classifier Button */}
+            {onOpenAIClassifier && (
+              <button
+                onClick={onOpenAIClassifier}
+                className="flex items-center space-x-1.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1.5 rounded-lg transition-colors font-semibold cursor-pointer shadow-sm"
+                title="เปิดแผงวิเคราะห์และจัดกลุ่มสินค้า/คอลัมน์อัตโนมัติด้วย AI"
+              >
+                <BrainCircuit className="w-3.5 h-3.5 text-purple-400" />
+                <span>AI จัดกลุ่มข้อมูล</span>
               </button>
             )}
 

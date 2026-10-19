@@ -32,13 +32,22 @@ import {
   exportFeedbackAuditLogsCsv, 
   exportFullEvaluationReportCsv 
 } from '../utils/csvExporter';
+import { ProcessedExcelSystemData } from '../utils/excelDataMapper';
 
-export const EvaluationView: React.FC = () => {
+interface EvaluationViewProps {
+  excelDataset?: ProcessedExcelSystemData | null;
+}
+
+export const EvaluationView: React.FC<EvaluationViewProps> = ({ excelDataset }) => {
   const [isRetraining, setIsRetraining] = useState(false);
   const [retrainSuccess, setRetrainSuccess] = useState(false);
   const [exportNotice, setExportNotice] = useState<string | null>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const monthlySavings = excelDataset 
+    ? `฿${Math.round(excelDataset.summary.totalRevenueTHB * 0.13).toLocaleString()}`
+    : '฿482,500';
 
   // Close dropdown on click outside
   useEffect(() => {
